@@ -12,6 +12,7 @@ import { gsap } from '../../lib/scroll'
 import { prefersReducedMotion } from '../../lib/device'
 import { TifinaghField } from '../../components/TifinaghField'
 import { useT } from '../../lib/i18n'
+import { isRevealed, onReveal } from '../../preload/store'
 
 const FRAME_MS = 7000
 const KB = ['kb-a', 'kb-b', 'kb-c', 'kb-d']
@@ -69,13 +70,16 @@ export function IntroSection() {
 
   useEffect(() => {
     const reduced = prefersReducedMotion()
+    let offReveal = () => {}
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.2 })
+      // the opening plays when the loading screen lifts, not underneath it
+      const tl = gsap.timeline({ delay: 0.2, paused: !isRevealed() })
       tl.from('[data-intro-film]', { opacity: 0, duration: 2.4, ease: 'power2.out' })
         .from('[data-letter]', { yPercent: 110, duration: 1.6, ease: 'expo.out', stagger: 0.07 }, '-=1.7')
         .from('[data-intro-line] > span', { yPercent: 105, duration: 1.3, ease: 'expo.out', stagger: 0.12 }, '-=1.1')
         .from('[data-intro-fade]', { opacity: 0, duration: 1.2, ease: 'power2.out', stagger: 0.12 }, '-=0.6')
       if (reduced) tl.progress(1)
+      else offReveal = onReveal(() => tl.play())
 
       if (!reduced) {
         // the film sinks back and darkens; the title lifts and dissolves
@@ -94,7 +98,10 @@ export function IntroSection() {
         })
       }
     }, root)
-    return () => ctx.revert()
+    return () => {
+      offReveal()
+      ctx.revert()
+    }
   }, [])
 
   return (

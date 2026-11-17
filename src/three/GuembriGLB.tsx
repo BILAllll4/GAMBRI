@@ -27,7 +27,8 @@ import { useGuembriMaterials, type GuembriFinish } from './Guembri'
 import { parts } from '../sections/guembri/journey'
 import type { ComponentId } from '../data/anatomy'
 
-export const GUEMBRI_GLB = '/models/guembri.glb'
+import { GUEMBRI_GLB } from '../preload/assets'
+export { GUEMBRI_GLB }
 
 type Mats = ReturnType<typeof useGuembriMaterials>
 const BY_NAME: Record<string, keyof Mats> = {

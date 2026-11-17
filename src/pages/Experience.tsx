@@ -66,7 +66,7 @@ export default function Experience() {
       {/* white introduction → the same 3D instrument settles into the playing scene */}
       <GuembriJourney />
       {/* light instrument room → the dark portal, without filtering anything */}
-      <div aria-hidden data-nav="light" data-nav-clear className="h-[38vh] bg-[linear-gradient(to_bottom,#e4e2dc_0%,#8f9a8c_45%,#0d2a20_100%)]" />
+      <div aria-hidden data-nav="dark" data-nav-clear className="h-[24vh] bg-[linear-gradient(to_bottom,#040906_0%,#0d2a20_100%)]" />
       <PortalSection />
     </div>
   )

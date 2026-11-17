@@ -266,3 +266,23 @@ select.field option { background: var(--color-olive); }
 html[lang='ar'] body { font-family: "Noto Naskh Arabic", var(--font-sans); }
 html[lang='ar'] .display { font-family: "Noto Naskh Arabic", var(--font-display); letter-spacing: 0; }
 html[lang='ar'] .label { letter-spacing: 0.04em; }
+/* Loading screen (components/Preloader): the guembri mark sways in perspective */
+.preloader-stage { perspective: 700px; }
+.preloader-sway { transform-style: preserve-3d; animation: pl-sway 7s ease-in-out infinite; }
+.preloader-shadow { animation: pl-shadow 7s ease-in-out infinite; }
+.preloader-strings line { animation: pl-string 0.18s ease-in-out infinite alternate; }
+.preloader-strings line:nth-child(2) { animation-duration: 0.23s; }
+.preloader-strings line:nth-child(3) { animation-duration: 0.29s; }
+@keyframes pl-sway {
+  0%, 100% { transform: rotateY(-18deg) rotateX(6deg) rotateZ(-3deg); }
+  50% { transform: rotateY(18deg) rotateX(6deg) rotateZ(3deg); }
+}
+@keyframes pl-shadow {
+  0%, 100% { transform: translateX(-56%) scaleX(0.9); opacity: .8; }
+  50% { transform: translateX(-44%) scaleX(0.9); opacity: .8; }
+}
+@keyframes pl-string { from { transform: translateX(-0.35px); } to { transform: translateX(0.35px); } }
+@media (prefers-reduced-motion: reduce) {
+  .preloader-sway, .preloader-shadow, .preloader-strings line { animation: none; }
+  .preloader-sway { transform: rotateY(-14deg) rotateX(6deg); }
+}

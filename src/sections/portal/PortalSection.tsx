@@ -34,6 +34,8 @@ export function PortalSection() {
   const root = useRef<HTMLElement>(null)
   const progress = useRef(0)
   const [near, setNear] = useState(false)
+  // drawn only while on screen; `near` (half a screen early) only mounts and preloads it
+  const [visible, setVisible] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [items, setItems] = useState(fallback)
   const t = useT()
@@ -70,8 +72,13 @@ export function PortalSection() {
       },
       { rootMargin: '50% 0px 50% 0px' },
     )
+    const vis = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { rootMargin: '0px' })
     obs.observe(root.current!)
-    return () => obs.disconnect()
+    vis.observe(root.current!)
+    return () => {
+      obs.disconnect()
+      vis.disconnect()
+    }
   }, [])
 
   useEffect(() => {
@@ -91,6 +98,8 @@ export function PortalSection() {
       tl.fromTo('[data-p-kicker]', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.06 }, 0.03)
         .fromTo('[data-p-title] > span > span', { yPercent: 110 }, { yPercent: 0, duration: 0.1, stagger: 0.03 }, 0.05)
         .to('[data-p-copy]', { opacity: 0, y: -30, duration: 0.1 }, 0.3)
+        // the green that joins this section to the guembri section clears as the gate comes closer
+        .to('[data-p-join]', { opacity: 0, duration: 0.14 }, 0.02)
         .fromTo('[data-p-hint]', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.06 }, 0.7)
         .set({}, {}, 1)
 
@@ -110,7 +119,7 @@ export function PortalSection() {
         <div className="absolute inset-0">
           {webgl && mounted ? (
             <Suspense fallback={null}>
-              <PortalScene progress={progress} active={near} items={shown} labels={labels} onOpen={open} />
+              <PortalScene progress={progress} active={near && visible} items={shown} labels={labels} onOpen={open} />
             </Suspense>
           ) : (
             <div className="flex h-full items-center justify-center">
@@ -118,6 +127,9 @@ export function PortalSection() {
             </div>
           )}
         </div>
+
+        {/* joins the evening sky to the guembri section above: same deep green, fading down */}
+        <div data-p-join aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-[30%] bg-[linear-gradient(to_bottom,#0d2a20_0%,rgba(13,42,32,0.6)_45%,rgba(13,42,32,0)_100%)]" />
 
         {/* name, price and one line of each card, placed over its panel by the scene */}
         <div className="pointer-events-none absolute inset-0 z-30 overflow-hidden">
@@ -149,7 +161,7 @@ export function PortalSection() {
         </div>
 
         {/* title over the approaching doorway */}
-        <div data-p-copy className="pointer-events-none absolute inset-x-0 top-[13%] flex flex-col items-center px-gutter text-center">
+        <div data-p-copy className="pointer-events-none absolute inset-x-0 top-[13%] flex flex-col items-center px-gutter text-center" style={{ textShadow: '0 2px 28px rgba(0,0,0,.75), 0 1px 4px rgba(0,0,0,.6)' }}>
           <p data-p-kicker className="label text-sand/80">{t({ en: 'IV · The portal', fr: 'IV · Le portail', ar: 'IV · البوابة' })}</p>
           <h2 data-p-title className="display mt-6 text-[length:var(--fs-h2)] leading-[0.95] text-ivory">
             <span className="mask"><span>{t({ en: 'Step through', fr: 'Franchissez', ar: 'اعبر' })}</span></span>

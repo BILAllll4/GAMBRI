@@ -4,6 +4,7 @@ import { Nav } from './components/Nav'
 import { Curtain, useTransitionNavigate } from './components/Curtain'
 import { CartDrawer } from './components/CartDrawer'
 import { Logo } from './components/Logo'
+import { Preloader } from './components/Preloader'
 import { startSmoothScroll, stopSmoothScroll, ScrollTrigger } from './lib/scroll'
 import { useDocumentLang, useT } from './lib/i18n'
 
@@ -93,6 +94,7 @@ export default function App() {
       <Footer />
       <CartDrawer />
       <Curtain />
+      <Preloader />
     </div>
   )
 }
